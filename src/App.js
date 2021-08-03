@@ -24,7 +24,7 @@ function App() {
     const handleKeydown = (event) => {
       const { key, keyCode } = event;
       if (playable && keyCode >= 65 && keyCode <= 90) {
-        const letter = key.toLowerCase();
+        const letter = key.toUpperCase();
         if (randomWords.includes(letter)) {
           if (!correctLetters.includes(letter)) {
             setCorrectLetters((currentLetters) => [...currentLetters, letter]);
@@ -58,9 +58,10 @@ function App() {
   };
   const keyword = Math.floor(Math.random() * 700) + 100;
 
-  const onSearch = async () => {
+  const onSearch = async (word) => {
     const response = await moviedb.get(`${keyword}`);
-    setRandomWords(response.data.title);
+    setRandomWords(response.data.title.toUpperCase());
+    console.log(randomWords)
   };
 
   return (
