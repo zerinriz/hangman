@@ -11,11 +11,13 @@ import moviedb from "./api/moviedb";
 
 function App() {
   const [playable, setPlayable] = useState(true);
-  const [correctLetters, setCorrectLetters] = useState([]);
+  const [correctLetters, setCorrectLetters] = useState([" "]);
   const [wrongLetters, setWrongLetters] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
   const [randomWords, setRandomWords] = useState("Error");
+  const [color, setColor] = useState("white");
 
+  console.log(randomWords);
   useEffect(() => {
     wordSearch();
   }, []);
@@ -25,6 +27,7 @@ function App() {
       const { key, keyCode } = event;
       if (playable && keyCode >= 65 && keyCode <= 90) {
         const letter = key.toUpperCase();
+        console.log(correctLetters);
         if (randomWords.includes(letter)) {
           if (!correctLetters.includes(letter)) {
             setCorrectLetters((currentLetters) => [...currentLetters, letter]);
@@ -47,7 +50,7 @@ function App() {
 
   function playAgain() {
     setPlayable(true);
-    setCorrectLetters([]);
+    setCorrectLetters([" "]);
     setWrongLetters([]);
     wordSearch();
   }
@@ -58,10 +61,13 @@ function App() {
   };
   const keyword = Math.floor(Math.random() * 700) + 100;
 
-  const onSearch = async (word) => {
+  const onSearch = async () => {
     const response = await moviedb.get(`${keyword}`);
-    setRandomWords(response.data.title.toUpperCase());
-    console.log(randomWords)
+    setRandomWords(
+      response.data.title
+        .toUpperCase()
+        .replace(/[&/\\#,+()$~%.'":*?<>{}!0-9 ]/g, " ")
+    );
   };
 
   return (
@@ -70,7 +76,7 @@ function App() {
       <div className="game-container">
         <Figure wrongLetters={wrongLetters} />
         <WrongLetters wrongLetters={wrongLetters} />
-        <Word randomWords={randomWords} correctLetters={correctLetters} />
+        <Word randomWords={randomWords} correctLetters={correctLetters} color={color} setColor={setColor}/>
       </div>
       <Popup
         correctLetters={correctLetters}
